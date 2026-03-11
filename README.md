@@ -8,6 +8,8 @@ Two Claude Code skills for diagnosing AI systems in client codebases.
 
 Built for consultants who audit AI systems built by agencies or freelancers. The diagnostic runs read-only against untrusted codebases with credential redaction and anti-prompt-injection guardrails.
 
+**The client repo is never modified — all output stays in this tool's directory.**
+
 ## Install
 
 ```bash
@@ -19,9 +21,10 @@ This symlinks the skills to `~/.claude/skills/`. Then `/diagnostic` and `/report
 ## Usage
 
 ```bash
-# In a client's cloned repo:
-/diagnostic          # Interactive — pauses after each step
-/diagnostic --fast   # Run all steps without pauses
+# From the diagnostic-tool directory:
+/diagnostic /path/to/client-repo          # Interactive — pauses after each step
+/diagnostic /path/to/client-repo --fast   # Run all steps without pauses
+/diagnostic https://github.com/org/repo   # Clone from GitHub and scan
 
 # After the scan:
 /report                        # Interactive — review each section
@@ -30,7 +33,7 @@ This symlinks the skills to `~/.claude/skills/`. Then `/diagnostic` and `/report
 
 ## Output
 
-`/diagnostic` writes to a `diagnostic/` directory:
+`/diagnostic` writes to `clients/<client-name>/diagnostic/` within this tool's directory — never into the client repo:
 
 | File | Contents |
 |------|----------|
@@ -43,11 +46,12 @@ This symlinks the skills to `~/.claude/skills/`. Then `/diagnostic` and `/report
 | `06-client-questions.md` | Tailored session questions |
 | `07-architecture.md` | Architecture diagram + legend |
 
-`/report` produces a single `report-YYMMDD-client-name.md` in the repo root.
+`/report` produces a single `clients/<client-name>/report-YYMMDD-client-name.md`.
 
 ## Safety
 
 - Read-only analysis — never modifies client repo files
+- All output written to `clients/` within this tool's directory, not the client repo
 - `chmod 600` on all output files
 - Credential patterns redacted before writing (API keys, tokens, connection strings)
 - Untrusted codebase content treated as data, not instructions
